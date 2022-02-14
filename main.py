@@ -36,11 +36,11 @@ parameters_stock = {
 
 response = requests.get(url=ALPHA_LINK, params=parameters_stock)
 response.raise_for_status()
+
 data = response.json()['Time Series (Daily)']
 list_of_days = [value for (key, value) in data.items()]
 yesterday_closing = float(list_of_days[0]['4. close'])
 day_before_yesterday_closing = float(list_of_days[1]['4. close'])
-print(day_before_yesterday_closing, yesterday_closing)
 
 if compare_prices(yesterday_closing, day_before_yesterday_closing) or True:
     parameters_news = {
@@ -63,19 +63,3 @@ if compare_prices(yesterday_closing, day_before_yesterday_closing) or True:
             to=os.environ.get('my_phone')
         )
     print(message.status)
-
-## STEP 3: Use https://www.twilio.com
-# Send a seperate message with the percentage change and each article's title and description to your phone number.
-
-
-#Optional: Format the SMS message like this:
-"""
-TSLA: 🔺2%
-Headline: Were Hedge Funds Right About Piling Into Tesla Inc. (TSLA)?. 
-Brief: We at Insider Monkey have gone over 821 13F filings that hedge funds and prominent investors are required to file by the SEC The 13F filings show the funds' and investors' portfolio positions as of March 31st, near the height of the coronavirus market crash.
-or
-"TSLA: 🔻5%
-Headline: Were Hedge Funds Right About Piling Into Tesla Inc. (TSLA)?. 
-Brief: We at Insider Monkey have gone over 821 13F filings that hedge funds and prominent investors are required to file by the SEC The 13F filings show the funds' and investors' portfolio positions as of March 31st, near the height of the coronavirus market crash.
-"""
-
