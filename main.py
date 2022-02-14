@@ -28,7 +28,6 @@ data = response.json()['Time Series (Daily)']
 list_of_days = [value for (key, value) in data.items()]
 yesterday_closing = float(list_of_days[0]['4. close'])
 day_before_yesterday_closing = float(list_of_days[1]['4. close'])
-print(yesterday_closing, day_before_yesterday_closing)
 
 
 if compare_prices(yesterday_closing, day_before_yesterday_closing) or True:
@@ -41,12 +40,14 @@ if compare_prices(yesterday_closing, day_before_yesterday_closing) or True:
     data = response.json()['articles'][:3]
     articles_list = [f"Headline: {article['title']}.\n Brief: {article['description']}\n{article['url']}\n" for article in data]
     client = Client(os.environ.get('account_sid'), os.environ.get('auth_token'))
-    message = client.messages \
-        .create(
-        body=articles_list,
-        from_='+18126339019',
-        to=os.environ.get('my_phone')
-    )
+
+    for article in articles_list:
+        message = client.messages \
+            .create(
+            body=article,
+            from_='+18126339019',
+            to=os.environ.get('my_phone')
+        )
     print(message.status)
 
 ## STEP 3: Use https://www.twilio.com
