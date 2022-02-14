@@ -1,6 +1,7 @@
 import os
 import requests
 import math
+from twilio.rest import Client
 
 STOCK = "TSLA"
 COMPANY_NAME = "Tesla Inc"
@@ -38,12 +39,15 @@ if compare_prices(yesterday_closing, day_before_yesterday_closing) or True:
     response = requests.get(url=NEWS_LINK, params=parameters_news)
     response.raise_for_status()
     data = response.json()['articles'][:3]
-    print(data)
-## STEP 1: Use https://www.alphavantage.co
-# When STOCK price increase/decreases by 5% between yesterday and the day before yesterday then print("Get News").
-
-## STEP 2: Use https://newsapi.org
-# Instead of printing ("Get News"), actually get the first 3 news pieces for the COMPANY_NAME.
+    articles_list = [f"Headline: {article['title']}. Brief: {article['description']}" for article in data]
+    # client = Client(os.environ.get('account_sid'), os.environ.get('auth_token'))
+    # message = client.messages \
+    #     .create(
+    #     body=articles_list,
+    #     from_='+18126339019',
+    #     to=os.environ.get('my_phone')
+    # )
+    # print(message.status)
 
 ## STEP 3: Use https://www.twilio.com
 # Send a seperate message with the percentage change and each article's title and description to your phone number.
