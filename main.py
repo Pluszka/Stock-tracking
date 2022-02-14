@@ -3,14 +3,23 @@ import requests
 import math
 from twilio.rest import Client
 
+event_emoji: str
 STOCK = "TSLA"
 COMPANY_NAME = "Tesla Inc"
 ALPHA_LINK = 'https://www.alphavantage.co/query'
 NEWS_LINK = 'https://newsapi.org/v2/everything'
 
+UP_EMOJI = '🔺'
+DOWN_EMOJI = '🔻'
+
 def compare_prices(yesterday, before_yesterday):
+    global event_emoji
     five_percent = before_yesterday * 0.01
     difference = before_yesterday - yesterday
+    if difference > 0:
+        event_emoji = UP_EMOJI
+    else:
+        event_emoji = DOWN_EMOJI
     if math.fabs(difference) >= five_percent:
         return True
     return False
