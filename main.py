@@ -3,6 +3,7 @@ import requests
 import math
 from twilio.rest import Client
 
+percent: int
 event_emoji: str
 STOCK = "TSLA"
 COMPANY_NAME = "Tesla Inc"
@@ -14,9 +15,11 @@ DOWN_EMOJI = '🔻'
 
 def compare_prices(yesterday, before_yesterday):
     global event_emoji
+    global percent
     five_percent = before_yesterday * 0.01
     difference = before_yesterday - yesterday
-    if difference > 0:
+    percent = yesterday / before_yesterday - 1
+    if percent > 0:
         event_emoji = UP_EMOJI
     else:
         event_emoji = DOWN_EMOJI
@@ -37,17 +40,19 @@ data = response.json()['Time Series (Daily)']
 list_of_days = [value for (key, value) in data.items()]
 yesterday_closing = float(list_of_days[0]['4. close'])
 day_before_yesterday_closing = float(list_of_days[1]['4. close'])
-
+print(day_before_yesterday_closing, yesterday_closing)
 
 if compare_prices(yesterday_closing, day_before_yesterday_closing) or True:
     parameters_news = {
         'qInTitle': COMPANY_NAME,
         'apiKey': os.environ.get('NEWS_API_KEY')
     }
+
     response = requests.get(url=NEWS_LINK, params=parameters_news)
     response.raise_for_status()
     data = response.json()['articles'][:3]
-    articles_list = [f"Headline: {article['title']}.\n Brief: {article['description']}\n{article['url']}\n" for article in data]
+
+    articles_list = [f"{STOCK}: {event_emoji}{round(percent, 5)}%\nHeadline: {article['title']}.\n Brief: {article['description']}\n{article['url']}\n" for article in data]
     client = Client(os.environ.get('account_sid'), os.environ.get('auth_token'))
 
     for article in articles_list:
