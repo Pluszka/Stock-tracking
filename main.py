@@ -16,7 +16,7 @@ DOWN_EMOJI = '🔻'
 def compare_prices(yesterday, before_yesterday):
     global event_emoji
     global percent
-    five_percent = before_yesterday * 0.01
+    five_percent = before_yesterday * 0.05
     difference = before_yesterday - yesterday
     percent = yesterday / before_yesterday - 1
     if percent > 0:
