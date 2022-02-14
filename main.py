@@ -9,7 +9,7 @@ ALPHA_LINK = 'https://www.alphavantage.co/query'
 NEWS_LINK = 'https://newsapi.org/v2/everything'
 
 def compare_prices(yesterday, before_yesterday):
-    five_percent = before_yesterday * 0.05
+    five_percent = before_yesterday * 0.01
     difference = before_yesterday - yesterday
     if math.fabs(difference) >= five_percent:
         return True
@@ -39,15 +39,15 @@ if compare_prices(yesterday_closing, day_before_yesterday_closing) or True:
     response = requests.get(url=NEWS_LINK, params=parameters_news)
     response.raise_for_status()
     data = response.json()['articles'][:3]
-    articles_list = [f"Headline: {article['title']}. Brief: {article['description']}" for article in data]
-    # client = Client(os.environ.get('account_sid'), os.environ.get('auth_token'))
-    # message = client.messages \
-    #     .create(
-    #     body=articles_list,
-    #     from_='+18126339019',
-    #     to=os.environ.get('my_phone')
-    # )
-    # print(message.status)
+    articles_list = [f"Headline: {article['title']}.\n Brief: {article['description']}\n{article['url']}\n" for article in data]
+    client = Client(os.environ.get('account_sid'), os.environ.get('auth_token'))
+    message = client.messages \
+        .create(
+        body=articles_list,
+        from_='+18126339019',
+        to=os.environ.get('my_phone')
+    )
+    print(message.status)
 
 ## STEP 3: Use https://www.twilio.com
 # Send a seperate message with the percentage change and each article's title and description to your phone number.
