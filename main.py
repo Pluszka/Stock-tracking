@@ -5,6 +5,7 @@ import math
 STOCK = "TSLA"
 COMPANY_NAME = "Tesla Inc"
 ALPHA_LINK = 'https://www.alphavantage.co/query'
+NEWS_LINK = 'https://newsapi.org/v2/everything'
 
 def compare_prices(yesterday, before_yesterday):
     five_percent = before_yesterday * 0.05
@@ -13,14 +14,14 @@ def compare_prices(yesterday, before_yesterday):
         return True
     return False
 
-parameters = {
+parameters_stock = {
     'function': 'TIME_SERIES_DAILY',
     'symbol': STOCK,
     'datatype': 'json',
     'apikey': os.environ.get('ALPHA_API_KEY')
 }
 
-response = requests.get(url=ALPHA_LINK, params=parameters)
+response = requests.get(url=ALPHA_LINK, params=parameters_stock)
 response.raise_for_status()
 data = response.json()['Time Series (Daily)']
 list_of_days = [value for (key, value) in data.items()]
@@ -29,10 +30,15 @@ day_before_yesterday_closing = float(list_of_days[1]['4. close'])
 print(yesterday_closing, day_before_yesterday_closing)
 
 
-if compare_prices(yesterday_closing, day_before_yesterday_closing):
-    print('NEws')
-
-
+if compare_prices(yesterday_closing, day_before_yesterday_closing) or True:
+    parameters_news = {
+        'qInTitle': COMPANY_NAME,
+        'apiKey': os.environ.get('NEWS_API_KEY')
+    }
+    response = requests.get(url=NEWS_LINK, params=parameters_news)
+    response.raise_for_status()
+    data = response.json()['articles'][:3]
+    print(data)
 ## STEP 1: Use https://www.alphavantage.co
 # When STOCK price increase/decreases by 5% between yesterday and the day before yesterday then print("Get News").
 
